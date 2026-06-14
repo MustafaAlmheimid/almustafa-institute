@@ -5,6 +5,7 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
+import LandingPage from "./pages/LandingPage";
 import StudentProfile from "./pages/StudentProfile";
 import Announcements from "./pages/Announcements";
 import Programs from "./pages/Programs";
@@ -21,13 +22,14 @@ function AppRoutes() {
   const { user } = useStore();
   return (
     <Routes>
+       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
       <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
       <Route path="/students" element={<Protected adminOnly><Students /></Protected>} />
       <Route path="/student/:id" element={<Protected><StudentProfile /></Protected>} />
       <Route path="/announcements" element={<Protected><Announcements /></Protected>} />
       <Route path="/programs" element={<Protected><Programs /></Protected>} />
-      <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
