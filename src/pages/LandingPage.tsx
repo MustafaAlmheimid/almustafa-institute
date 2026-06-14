@@ -25,9 +25,9 @@ export default function LandingPage() {
 
   // معرض صور الأنشطة
   const activities = [
-    { title: "تكريم حفظة سورة الملك", img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=500&q=80" },
-    { title: "رحلة ترفيهية لطلاب الحلقات", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=500&q=80" },
-    { title: "مسابقة رمضان السنوية الكبرى", img: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=500&q=80" },
+    { title: "تكريم حفظة سورة الملك", img: "/all.jpg" },
+    { title: "رحلة ترفيهية لطلاب الحلقات", img: "/all1.jpg" },
+    { title: "مسابقة رمضان السنوية الكبرى", img: "/all2.jpg" },
   ];
 
   return (
@@ -119,7 +119,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="relative">
-          <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=600&q=80" alt="حول المعهد" className="rounded-2xl shadow-xl object-cover w-full h-80 border-4 border-white dark:border-[#0f211a]" />
+          <img src="/inside.jpg" alt="حول المعهد" className="rounded-2xl shadow-xl object-cover w-full h-80 border-4 border-white dark:border-[#0f211a]" />
           <div className="absolute -bottom-5 -right-5 bg-gold text-emerald-deep p-5 rounded-2xl shadow-lg font-black text-center">
             <span className="text-3xl block">100%</span>
             <span className="text-xs">بيئة آمنة وملهمة</span>
@@ -213,7 +213,7 @@ export default function LandingPage() {
               يسعدنا دائماً تواصلكم معنا للرد على استفساراتكم أو لتسجيل أبنائكم في حلقات الإتقان والتميز في أي وقت.
             </p>
             <div className="flex gap-2 pt-2">
-              <a href="https://wa.me/96100000000" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 hover:bg-green-500/30 transition-colors">
+              <a href="https://wa.me/00963995482768" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 hover:bg-green-500/30 transition-colors">
                 <MessageCircle className="w-5 h-5 fill-current" />
               </a>
             </div>
@@ -224,11 +224,11 @@ export default function LandingPage() {
             <div className="space-y-3 text-xs text-emerald-100">
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-gold shrink-0" />
-                <span>الإدارة: 9610000000+ (متاح اتصال وواتساب)</span>
+                <span>الإدارة: 0995482768 (متاح اتصال وواتساب)</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span>الموقع: لبنان، بيروت، الشارع الرئيسي بجانب المسجد الكبير</span>
+                <span>الموقع: سوريا / حمص /ريف القصير قرية سقرجة الطريق العام</span>
               </div>
             </div>
           </div>

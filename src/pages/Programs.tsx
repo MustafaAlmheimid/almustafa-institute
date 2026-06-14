@@ -1,374 +1,289 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  BookOpen, Mic, ScrollText, GraduationCap, Target, Award, Users,
-  Plus, Pencil, Trash2, X, Upload, UserPlus, LayoutGrid,
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { 
+  BookOpen, Award, Target, Compass, Users, Phone, MapPin, 
+  MessageCircle, LayoutDashboard, Menu, X, CheckCircle2, Star 
 } from "lucide-react";
-import { useStore, uid, type Teacher, type Program } from "../lib/store";
-import { Card, SectionTitle } from "../components/ui";
+// استيراد الـ store لجلب البيانات الحية
+import { useStore } from "../lib/store";
 
-const iconMap: Record<string, typeof BookOpen> = {
-  book: BookOpen, mic: Mic, scroll: ScrollText, graduation: GraduationCap, target: Target, award: Award,
-};
+export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-const iconOptions: { key: string; label: string }[] = [
-  { key: "book", label: "كتاب" },
-  { key: "mic", label: "تلاوة" },
-  { key: "scroll", label: "علوم" },
-  { key: "graduation", label: "تخرج" },
-  { key: "target", label: "هدف" },
-  { key: "award", label: "شهادة" },
-];
+  // جلب البرامج والمدرسين المخزنين في الـ Database
+  const { programs: dbPrograms, teachers: dbTeachers } = useStore();
 
-export default function Programs() {
-  const {
-    programs, teachers, user,
-    addTeacher, updateTeacher, deleteTeacher,
-    addProgram, updateProgram, deleteProgram,
-  } = useStore();
-  const isAdmin = user?.role === "admin";
+  // برامج افتراضية تظهر كاحتياط في حال كانت الـ Database فارغة
+  const defaultPrograms = [
+    { id: "p1", title: "حفظ وتجويد القرآن الكريم", description: "حلقات مخصصة لجميع الأعمار تهدف إلى الحفظ المتقن بأحكام التجويد." },
+    { id: "p2", title: "علوم القرآن والحديث", description: "دراسة مبسطة لعمق الآيات الكريمة والأحاديث النبوية الشريفة." },
+    { id: "p3", title: "برنامج التميز الأسبوعي", description: "تحفيز مستمر للطلاب الملتزمين وتتويج نجم الأسبوع بجوائز تقديرية." },
+  ];
 
-  // ---- Teacher modal state ----
-  const [editingT, setEditingT] = useState<Teacher | null>(null);
-  const [isNewT, setIsNewT] = useState(false);
-  const [confirmDelT, setConfirmDelT] = useState<string | null>(null);
+  // دمج أو اختيار البيانات المعروضة
+  const programsToDisplay = dbPrograms && dbPrograms.length > 0 ? dbPrograms : defaultPrograms;
+  const teachersToDisplay = dbTeachers || [];
 
-  const openNewT = () => { setEditingT({ id: uid(), name: "", subject: "", photo: "" }); setIsNewT(true); };
-  const openEditT = (t: Teacher) => { setEditingT({ ...t }); setIsNewT(false); };
-  const saveT = () => {
-    if (!editingT || !editingT.name.trim()) return;
-    if (isNewT) addTeacher(editingT); else updateTeacher(editingT);
-    setEditingT(null);
-  };
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !editingT) return;
-    const reader = new FileReader();
-    reader.onload = () => setEditingT({ ...editingT, photo: reader.result as string });
-    reader.readAsDataURL(file);
-  };
-
-  // ---- Program modal state ----
-  const [editingP, setEditingP] = useState<Program | null>(null);
-  const [isNewP, setIsNewP] = useState(false);
-  const [confirmDelP, setConfirmDelP] = useState<string | null>(null);
-
-  const openNewP = () => { setEditingP({ id: uid(), title: "", description: "", icon: "book", duration: "", level: "" }); setIsNewP(true); };
-  const openEditP = (p: Program) => { setEditingP({ ...p }); setIsNewP(false); };
-  const saveP = () => {
-    if (!editingP || !editingP.title.trim()) return;
-    if (isNewP) addProgram(editingP); else updateProgram(editingP);
-    setEditingP(null);
-  };
+  // معرض صور الأنشطة للمعهد
+  const activities = [
+    { title: "تكريم حفظة سورة الملك", img: "/all.jpg" },
+    { title: "رحلة ترفيهية لطلاب الحلقات", img: "/all1.jpg" },
+    { title: "مسابقة رمضان السنوية الكبرى", img: "/all2.jpg" },
+  ];
 
   return (
-    <div className="space-y-8">
-      {/* ===== Programs ===== */}
-      <div className="flex items-center justify-between">
-        <SectionTitle sub="برامج معهد المصطفى التعليمية المتكاملة">البرامج التعليمية</SectionTitle>
-        {isAdmin && (
-          <button
-            onClick={openNewP}
-            className="flex items-center gap-2 bg-gradient-to-l from-emerald-bright to-emerald-rich text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform shrink-0"
-          >
-            <Plus className="w-5 h-5" /> إضافة برنامج
-          </button>
-        )}
-      </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-[#07110d] text-right font-sans selection:bg-emerald-rich selection:text-white" dir="rtl">
+      
+      {/* الهيدر / شريط التنقل */}
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0f211a]/80 backdrop-blur-md border-b border-emerald-100 dark:border-white/5 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-bright to-emerald-rich flex items-center justify-center text-white font-bold shadow-md">
+              م
+            </div>
+            <div>
+              <span className="text-xl font-black text-emerald-deep dark:text-white block tracking-tight">مَعْهَد المُصْطَفَى</span>
+              <span className="text-[10px] font-bold text-gold block -mt-1">لعلوم القرآن الكريم</span>
+            </div>
+          </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {programs.map((p, i) => {
-          const Icon = iconMap[p.icon] ?? BookOpen;
-          return (
-            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
-              <Card className="p-6 h-full relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all">
-                <div className="pattern-islamic absolute inset-0 opacity-40" />
-                <div className="relative">
-                  <div className="flex items-start justify-between">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-bright to-emerald-deep flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                      <Icon className="w-7 h-7" />
-                    </div>
-                    {isAdmin && (
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => openEditP(p)} className="p-2 rounded-lg text-sky-600 hover:bg-sky-100 dark:hover:bg-white/10" title="تعديل">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => setConfirmDelP(p.id)} className="p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-white/10" title="حذف">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-xl text-emerald-deep dark:text-white mt-4">{p.title}</h3>
-                  <p className="text-gray-500 dark:text-emerald-100/60 text-sm mt-2 leading-relaxed">{p.description}</p>
-                  <div className="flex items-center gap-2 mt-4 text-xs flex-wrap">
-                    {p.duration && <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-white/5 text-emerald-rich font-semibold">{p.duration}</span>}
-                    {p.level && <span className="px-3 py-1 rounded-full bg-amber-50 dark:bg-white/5 text-amber-600 font-semibold">{p.level}</span>}
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          );
-        })}
-        {programs.length === 0 && (
-          <p className="col-span-full text-center text-gray-400 py-8">لا توجد برامج مسجلة</p>
-        )}
-      </div>
+          {/* القائمة لنسخة الحاسوب */}
+          <nav className="hidden md:flex items-center gap-7 text-sm font-bold text-gray-600 dark:text-emerald-100/70">
+            <a href="#about" className="hover:text-emerald-rich transition-colors">نبذة عنا</a>
+            <a href="#vision" className="hover:text-emerald-rich transition-colors">الرؤية والرسالة</a>
+            <a href="#programs" className="hover:text-emerald-rich transition-colors">البرامج</a>
+            <a href="#activities" className="hover:text-emerald-rich transition-colors">أنشطتنا</a>
+            <a href="#teachers" className="hover:text-emerald-rich transition-colors">المدرسون</a>
+            <a href="#contact" className="hover:text-emerald-rich transition-colors">اتصل بنا</a>
+          </nav>
 
-      {/* ===== Teachers ===== */}
-      <div>
-        <div className="flex items-center justify-between">
-          <SectionTitle sub="نخبة من المعلمين المتخصصين">هيئة التدريس</SectionTitle>
-          {isAdmin && (
-            <button
-              onClick={openNewT}
-              className="flex items-center gap-2 bg-gradient-to-l from-emerald-bright to-emerald-rich text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:scale-105 transition-transform shrink-0"
+          <div className="flex items-center gap-3">
+            <Link 
+              to="/login" 
+              className="inline-flex items-center gap-2 bg-gradient-to-l from-emerald-rich to-emerald-deep text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:scale-105 transition-transform"
             >
-              <Plus className="w-5 h-5" /> إضافة معلم
+              <LayoutDashboard className="w-4 h-4" /> لوحة الإدارة
+            </Link>
+            <button className="md:hidden p-2 text-emerald-deep dark:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-          )}
+          </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {teachers.map((t, i) => (
-            <motion.div key={t.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}>
-              <Card className="p-5 text-center relative group">
-                {t.photo ? (
-                  <img src={t.photo} alt={t.name} className="w-16 h-16 rounded-full object-cover mx-auto border-2 border-emerald-100" />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-bright to-emerald-deep mx-auto flex items-center justify-center text-white">
-                    <Users className="w-8 h-8" />
-                  </div>
-                )}
-                <p className="font-bold text-emerald-deep dark:text-white mt-3">{t.name}</p>
-                <p className="text-xs text-gray-400 mt-1">{t.subject}</p>
+      {/* القائمة المتنقلة للموبايل */}
+      {mobileMenuOpen && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden fixed inset-x-0 bg-white dark:bg-[#0f211a] border-b border-emerald-100 p-5 space-y-4 z-40 font-bold shadow-xl">
+          <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">نبذة عنا</a>
+          <a href="#vision" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">الرؤية والرسالة</a>
+          <a href="#programs" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">البرامج التعليمية</a>
+          <a href="#activities" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">صور الأنشطة</a>
+          <a href="#teachers" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">المدرسون</a>
+          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block text-gray-700 dark:text-emerald-100">تواصل معنا</a>
+        </motion.div>
+      )}
 
-                {isAdmin && (
-                  <div className="flex items-center justify-center gap-1 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => openEditT(t)} className="p-2 rounded-lg text-sky-600 hover:bg-sky-100 dark:hover:bg-white/10" title="تعديل">
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => setConfirmDelT(t.id)} className="p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-white/10" title="حذف">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </Card>
+      {/* قسم الترحيب / Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-deep to-emerald-rich text-white py-24 px-4 pattern-islamic text-center">
+        <div className="max-w-4xl mx-auto relative z-10 space-y-6">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-block bg-white/10 px-4 py-1.5 rounded-full text-gold text-xs font-black">
+            ﷽ هدىً وبشرى للمؤمنين
+          </motion.div>
+          <h1 className="text-4xl md:text-6xl font-black font-arabic leading-tight">مرحباً بكم في معهد المصطفى لعلوم القرآن</h1>
+          <p className="text-emerald-100 md:text-xl max-w-2xl mx-auto leading-relaxed">
+            بيئة إيمانية تربوية تسعى لبناء جيل قرآني فريد، يجمع بين إتقان الحفظ والعمل بأخلاق كتاب الله وسنة رسوله.
+          </p>
+          <div className="flex justify-center gap-4 pt-4">
+            <a href="#about" className="bg-gold text-emerald-deep font-extrabold px-8 py-3.5 rounded-xl shadow-lg hover:bg-yellow-500 transition-colors">اكتشف المعهد</a>
+            <a href="https://wa.me/00963995482768" target="_blank" rel="noreferrer" className="bg-white/10 border border-white/20 font-bold px-6 py-3.5 rounded-xl inline-flex items-center gap-2 hover:bg-white/20 transition-all">
+              <MessageCircle className="w-5 h-5 text-green-400 fill-green-400" /> استفسار سريع عبر واتساب
+            </a>
+          </div>
+        </div>
+        <div className="absolute inset-0 bg-[url('/hero-bg.png')] opacity-10 bg-cover bg-center pointer-events-none"></div>
+      </section>
+
+      {/* قسم نبذة عن المعهد */}
+      <section id="about" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+        <div className="space-y-5">
+          <div className="flex items-center gap-2 text-emerald-rich font-bold text-sm">
+            <span className="w-8 h-0.5 bg-emerald-rich"></span> من نحن
+          </div>
+          <h2 className="text-3xl font-black text-emerald-deep dark:text-white">أهلاً بكم في صرح القرآن الكريم</h2>
+          <p className="text-gray-600 dark:text-emerald-100/70 leading-relaxed text-justify">
+            تأسس معهد المصطفى ليكون منارة مباركة تخدم كتاب الله عز وجل، ونظاماً متكاملاً لا يقتصر فقط على التلقين بل يركز على الفهم التربوي والتميز المعرفي. نعتمد في حلقتنا على أحدث الوسائل التقنية للمتابعة الشفافة واليومية مع أولياء الأمور لبناء شراكة حقيقية تضمن تفوق ونبوغ أبنائنا وبناتنا.
+          </p>
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-bright shrink-0" /><span className="text-sm font-bold text-gray-700 dark:text-emerald-200">متابعة إلكترونية دقيقة</span></div>
+            <div className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-emerald-bright shrink-0" /><span className="text-sm font-bold text-gray-700 dark:text-emerald-200">بيئة تربوية محفزة</span></div>
+          </div>
+        </div>
+        <div className="relative">
+          <img src="/inside.jpg" alt="حول المعهد" className="rounded-2xl shadow-xl object-cover w-full h-80 border-4 border-white dark:border-[#0f211a]" />
+          <div className="absolute -bottom-5 -right-5 bg-gold text-emerald-deep p-5 rounded-2xl shadow-lg font-black text-center">
+            <span className="text-3xl block">100%</span>
+            <span className="text-xs">بيئة آمنة وملهمة</span>
+          </div>
+        </div>
+      </section>
+
+      {/* قسم الرؤية والرسالة */}
+      <section id="vision" className="bg-emerald-50 dark:bg-[#0c1814] py-20 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8">
+          <div className="bg-white dark:bg-[#0f211a] p-8 rounded-2xl shadow-sm border border-emerald-100 dark:border-white/5 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-rich"><Target className="w-6 h-6" /></div>
+            <h3 className="text-xl font-bold text-emerald-deep dark:text-white">رؤية المعهد</h3>
+            <p className="text-gray-600 dark:text-emerald-100/70 text-sm leading-relaxed">
+              أن نكون المرجع الرائد والنموذج الأسمى في تعليم القرآن الكريم وتخريج الحفظة المتقنين المتميزين علمياً وأخلاقياً على مستوى المنطقة، مدمجين روح الأصالة بأدوات العصر الحديثة.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-[#0f211a] p-8 rounded-2xl shadow-sm border border-emerald-100 dark:border-white/5 space-y-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600"><Compass className="w-6 h-6" /></div>
+            <h3 className="text-xl font-bold text-emerald-deep dark:text-white">رسالتنا</h3>
+            <p className="text-gray-600 dark:text-emerald-100/70 text-sm leading-relaxed">
+              تعليم كتاب الله غضاً طرياً كما أُنزل، عبر توفير طواقم تعليمية مؤهلة، ومناهج متوازنة تراعي الفروق الفردية للطلاب، وتوظيف برامج التحفيز المستمر لترغيب الناشئة في ملازمة القرآن.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* قسم البرامج والمسارات - مربوط بالـ Store */}
+      <section id="programs" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-3 mb-12">
+          <h2 className="text-3xl font-black text-emerald-deep dark:text-white">برامجنا التعليمية المتميزة</h2>
+          <p className="text-gray-500 max-w-xl mx-auto text-sm">مسارات تعليمية واضحة ومدروسة بعناية لتناسب قدرات ومستويات كل طالب وطالبة</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {programsToDisplay.map((p, i) => (
+            <div key={p.id || i} className="bg-white dark:bg-[#0f211a] p-6 rounded-2xl border border-slate-200/60 dark:border-white/5 shadow-sm space-y-4 hover:border-emerald-bright dark:hover:border-emerald-bright transition-all">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-white/5 flex items-center justify-center text-emerald-rich">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-emerald-deep dark:text-white">{p.title}</h3>
+              <p className="text-gray-600 dark:text-emerald-100/60 text-xs leading-relaxed">{p.description}</p>
+              
+              {/* عرض المدة والمستوى في حال تواجدهما في بيانات الـ store */}
+              {('duration' in p || 'level' in p) && (
+                <div className="flex items-center gap-2 mt-2 text-[10px] flex-wrap">
+                  {p.duration && <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-white/5 text-emerald-rich font-semibold">{p.duration}</span>}
+                  {p.level && <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-white/5 text-amber-600 font-semibold">{p.level}</span>}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* قسم صور الأنشطة */}
+      <section id="activities" className="bg-slate-100 dark:bg-[#0b1411] py-20 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-3 mb-12">
+            <h2 className="text-3xl font-black text-emerald-deep dark:text-white">صور من أنشطة وفعاليات المعهد</h2>
+            <p className="text-gray-500 max-w-xl mx-auto text-sm">نشارككم لحظات الفرح والإنجاز والأنشطة الترفيهية لطلابنا المباركين</p>
+          </div>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {activities.map((act, i) => (
+              <div key={i} className="group relative rounded-2xl overflow-hidden shadow-md bg-white border border-gray-200 dark:border-0">
+                <img src={act.img} alt={act.title} className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-deep via-emerald-deep/40 to-transparent opacity-90 p-4 flex flex-col justify-end">
+                  <h4 className="text-white font-bold text-sm flex items-center gap-1.5"><Star className="w-4 h-4 fill-gold text-gold" /> {act.title}</h4>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* قسم المدرسين الأفاضل - مربوط بالـ Store بالكامل */}
+      <section id="teachers" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-3 mb-12">
+          <h2 className="text-3xl font-black text-emerald-deep dark:text-white">طاقمنا التعليمي المتميز</h2>
+          <p className="text-gray-500 max-w-xl mx-auto text-sm">كفاءات قرآنية متخصصة تجمع بين الخبرة الطويلة والأسلوب التربوي الحكيم</p>
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 justify-center">
+          {teachersToDisplay.map((t, i) => (
+            <motion.div 
+              key={t.id || i} 
+              initial={{ opacity: 0, scale: 0.9 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              transition={{ delay: i * 0.05 }}
+              className="bg-white dark:bg-[#0f211a] p-5 rounded-2xl text-center border border-slate-200/60 dark:border-white/5 shadow-sm space-y-3"
+            >
+              {t.photo ? (
+                <img src={t.photo} alt={t.name} className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-emerald-50 dark:border-white/10 shadow-sm" />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-bright to-emerald-deep mx-auto flex items-center justify-center text-white shadow-md">
+                  <Users className="w-9 h-9" />
+                </div>
+              )}
+              <div>
+                <h3 className="font-bold text-emerald-deep dark:text-white text-sm line-clamp-1">{t.name}</h3>
+                <p className="text-xs text-gold font-semibold mt-1 line-clamp-1">{t.subject || "مدرس القرآن الكريم"}</p>
+              </div>
             </motion.div>
           ))}
-          {teachers.length === 0 && (
-            <p className="col-span-full text-center text-gray-400 py-8">لا يوجد معلمون مسجلون</p>
+          
+          {teachersToDisplay.length === 0 && (
+            <p className="col-span-full text-center text-gray-400 py-8 text-sm">لا يوجد معلمون مسجلون حالياً في هيئة التدريس.</p>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* ===== Program modal ===== */}
-      <AnimatePresence>
-        {editingP && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setEditingP(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-[#0f211a] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" dir="rtl"
-            >
-              <div className="sticky top-0 bg-emerald-deep text-white px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-                <h3 className="font-bold text-lg flex items-center gap-2">
-                  <LayoutGrid className="w-5 h-5" /> {isNewP ? "إضافة برنامج جديد" : "تعديل البرنامج"}
-                </h3>
-                <button onClick={() => setEditingP(null)}><X className="w-6 h-6" /></button>
+      {/* قسم اتصل بنا والمعلومات الجغرافية */}
+      <section id="contact" className="bg-emerald-deep text-white py-16 px-4 pattern-islamic">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 items-start relative z-10">
+          
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gold">معهد المصطفى للقرآن</h3>
+            <p className="text-emerald-100 text-xs leading-relaxed">
+              يسعدنا دائماً تواصلكم معنا للرد على استفساراتكم أو لتسجيل أبنائكم في حلقات الإتقان والتميز في أي وقت.
+            </p>
+            <div className="flex gap-2 pt-2">
+              <a href="https://wa.me/00963995482768" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 hover:bg-green-500/30 transition-colors">
+                <MessageCircle className="w-5 h-5 fill-current" />
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gold">أرقام التواصل والعنوان</h3>
+            <div className="space-y-3 text-xs text-emerald-100">
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-gold shrink-0" />
+                <span>الإدارة: 0995482768 (متاح اتصال وواتساب)</span>
               </div>
-
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">اسم البرنامج</label>
-                  <input
-                    value={editingP.title}
-                    onChange={(e) => setEditingP({ ...editingP, title: e.target.value })}
-                    className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                    placeholder="مثال: حفظ القرآن الكريم"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">الوصف</label>
-                  <textarea
-                    rows={3}
-                    value={editingP.description}
-                    onChange={(e) => setEditingP({ ...editingP, description: e.target.value })}
-                    className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                    placeholder="وصف مختصر للبرنامج..."
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">المدة</label>
-                    <input
-                      value={editingP.duration}
-                      onChange={(e) => setEditingP({ ...editingP, duration: e.target.value })}
-                      className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                      placeholder="مثال: 6 أشهر"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">المستوى</label>
-                    <input
-                      value={editingP.level}
-                      onChange={(e) => setEditingP({ ...editingP, level: e.target.value })}
-                      className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                      placeholder="مثال: جميع المستويات"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100 mb-2 block">الأيقونة</label>
-                  <div className="grid grid-cols-6 gap-2">
-                    {iconOptions.map((opt) => {
-                      const Icon = iconMap[opt.key];
-                      const active = editingP.icon === opt.key;
-                      return (
-                        <button
-                          key={opt.key}
-                          type="button"
-                          onClick={() => setEditingP({ ...editingP, icon: opt.key })}
-                          className={`flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all ${
-                            active
-                              ? "border-emerald-bright bg-emerald-50 dark:bg-white/10 text-emerald-rich"
-                              : "border-gray-200 dark:border-white/10 text-gray-400 hover:border-emerald-bright"
-                          }`}
-                        >
-                          <Icon className="w-5 h-5" />
-                          <span className="text-[9px] font-semibold">{opt.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button onClick={saveP} className="flex-1 py-3 rounded-xl bg-gradient-to-l from-emerald-bright to-emerald-rich text-white font-bold hover:scale-[1.02] transition-transform">
-                    {isNewP ? "إضافة البرنامج" : "حفظ التغييرات"}
-                  </button>
-                  <button onClick={() => setEditingP(null)} className="px-6 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white font-semibold">
-                    إلغاء
-                  </button>
-                </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-gold shrink-0" />
+                <span>الموقع: سوريا / حمص / ريف القصير - قرية سقرجة - الطريق العام</span>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
 
-      {/* ===== Teacher modal ===== */}
-      <AnimatePresence>
-        {editingT && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setEditingT(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-[#0f211a] rounded-2xl w-full max-w-md" dir="rtl"
-            >
-              <div className="bg-emerald-deep text-white px-6 py-4 flex items-center justify-between rounded-t-2xl">
-                <h3 className="font-bold text-lg flex items-center gap-2">
-                  <UserPlus className="w-5 h-5" /> {isNewT ? "إضافة معلم جديد" : "تعديل بيانات المعلم"}
-                </h3>
-                <button onClick={() => setEditingT(null)}><X className="w-6 h-6" /></button>
-              </div>
+          {/* الخريطة الجغرافية لموقع المعهد */}
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-gold">موقعنا على الخريطة</h3>
+            <div className="rounded-xl overflow-hidden border-2 border-emerald-800 h-40 bg-emerald-900/40">
+              <iframe 
+                title="موقع معهد المصطفى"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3312.2852264870025!2d35.5011!3d33.8938!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUzJzM3LjciTiAzNcKwMzAnMDQuMCJF!5e0!3m2!1sar!2slb!4v1620000000000!5m2!1sar!2slb" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={false} 
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
 
-              <div className="p-6 space-y-4">
-                <div className="flex items-center gap-4">
-                  {editingT.photo ? (
-                    <img src={editingT.photo} alt="" className="w-20 h-20 rounded-2xl object-cover border-2 border-emerald-100" />
-                  ) : (
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-bright to-emerald-deep flex items-center justify-center text-white">
-                      <Users className="w-9 h-9" />
-                    </div>
-                  )}
-                  <label className="flex items-center gap-2 px-4 py-2 rounded-xl border border-emerald-200 dark:border-white/10 cursor-pointer hover:bg-emerald-50 dark:hover:bg-white/5 text-emerald-rich text-sm font-semibold">
-                    <Upload className="w-4 h-4" /> رفع صورة
-                    <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
-                  </label>
-                </div>
+        </div>
+        <div className="border-t border-emerald-800 text-center mt-12 pt-6 text-[11px] text-emerald-200">
+          جميع الحقوق محفوظة © {new Date().getFullYear()} معهد المصطفى لعلوم القرآن الكريم.
+        </div>
+      </section>
 
-                <div>
-                  <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">اسم المعلم</label>
-                  <input
-                    value={editingT.name}
-                    onChange={(e) => setEditingT({ ...editingT, name: e.target.value })}
-                    className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                    placeholder="مثال: الشيخ عبد الرحمن"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">التخصص / المادة</label>
-                  <input
-                    value={editingT.subject}
-                    onChange={(e) => setEditingT({ ...editingT, subject: e.target.value })}
-                    className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
-                    placeholder="مثال: حفظ القرآن والتجويد"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button onClick={saveT} className="flex-1 py-3 rounded-xl bg-gradient-to-l from-emerald-bright to-emerald-rich text-white font-bold hover:scale-[1.02] transition-transform">
-                    {isNewT ? "إضافة المعلم" : "حفظ التغييرات"}
-                  </button>
-                  <button onClick={() => setEditingT(null)} className="px-6 py-3 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white font-semibold">
-                    إلغاء
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ===== Delete confirms ===== */}
-      <AnimatePresence>
-        {(confirmDelT || confirmDelP) && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-            onClick={() => { setConfirmDelT(null); setConfirmDelP(null); }}
-          >
-            <motion.div
-              initial={{ scale: 0.9 }} animate={{ scale: 1 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-[#0f211a] rounded-2xl p-6 max-w-sm text-center" dir="rtl"
-            >
-              <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
-                <Trash2 className="w-7 h-7 text-red-500" />
-              </div>
-              <h3 className="font-bold text-lg text-emerald-deep dark:text-white">تأكيد الحذف</h3>
-              <p className="text-gray-500 text-sm mt-1">
-                {confirmDelP ? "هل أنت متأكد من حذف هذا البرنامج؟ لا يمكن التراجع." : "هل أنت متأكد من حذف هذا المعلم؟ لا يمكن التراجع."}
-              </p>
-              <div className="flex gap-3 mt-5">
-                <button
-                  onClick={() => {
-                    if (confirmDelP) deleteProgram(confirmDelP);
-                    if (confirmDelT) deleteTeacher(confirmDelT);
-                    setConfirmDelP(null); setConfirmDelT(null);
-                  }}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-bold"
-                >
-                  حذف
-                </button>
-                <button onClick={() => { setConfirmDelT(null); setConfirmDelP(null); }} className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white font-semibold">
-                  إلغاء
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
