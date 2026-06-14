@@ -96,7 +96,11 @@ interface StoreContextType extends DataState {
 const StoreContext = createContext<StoreContextType | null>(null);
 
 const USER_KEY = "almustafa_user_v1";
-const API_BASE_URL = "http://localhost:3001/api"; 
+
+// 🌍 جعل الرابط ديناميكياً ليعمل محلياً وعلى السيرفر السحابي دون تعديل يدوي
+const API_BASE_URL = window.location.hostname === "localhost" 
+  ? "http://localhost:3001/api" 
+  : "/api";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [students, setStudents] = useState<Student[]>([]);
@@ -161,7 +165,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(USER_KEY);
   };
 
-  // 🚀 تحسين الطلاب: تحديث الـ State محلياً فوراً لمنع البطء
   const addStudent = async (s: Omit<Student, "id" | "lastUpdate">) => {
     const res = await fetch(`${API_BASE_URL}/students`, {
       method: "POST",
@@ -175,7 +178,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   const updateStudent = async (s: Student) => {
-    // تحديث محلي فوري واجهة المستخدم للتخلص من وقت الانتظار
     setStudents(prev => prev.map(x => x.id === s.id ? { ...s, lastUpdate: new Date().toISOString().slice(0, 10) } : x));
     await fetch(`${API_BASE_URL}/students/${s.id}`, {
       method: "PUT",
@@ -192,7 +194,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const toggleSurah = async (studentId: string, surah: number) => {
     const todayStr = new Date().toISOString().slice(0, 10);
     
-    // تحديث فوري سريع جداً في الواجهة
     setStudents(prev => prev.map(st => {
       if (st.id !== studentId) return st;
       const has = st.memorized.some(m => m.surah === surah);
@@ -210,7 +211,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   const setAttendance = async (studentId: string, date: string, status: "present" | "absent" | "late" | "none") => {
-    // تحديث فوري سريع جداً لدفتر الحضور والغياب
     setStudents(prev => prev.map(st => {
       if (st.id !== studentId) return st;
       let attendance = st.attendance.filter(a => a.date !== date);
@@ -226,7 +226,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // 🚀 تحسين الإعلانات
   const addAnnouncement = async (a: Omit<Announcement, "id">) => {
     const res = await fetch(`${API_BASE_URL}/announcements`, {
       method: "POST",
@@ -253,7 +252,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     await fetch(`${API_BASE_URL}/announcements/${id}`, { method: "DELETE" });
   };
 
-  // 🚀 تحسين البرامج
   const addProgram = async (p: Omit<Program, "id">) => {
     const res = await fetch(`${API_BASE_URL}/programs`, {
       method: "POST",
@@ -280,7 +278,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     await fetch(`${API_BASE_URL}/programs/${id}`, { method: "DELETE" });
   };
 
-  // 🚀 تحسين المعلمين
   const addTeacher = async (t: Omit<Teacher, "id">) => {
     const res = await fetch(`${API_BASE_URL}/teachers`, {
       method: "POST",
