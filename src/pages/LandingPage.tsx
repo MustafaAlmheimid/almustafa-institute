@@ -5,25 +5,27 @@ import {
   BookOpen, Award, Target, Compass, Users, Phone, MapPin, 
   MessageCircle, LayoutDashboard, Menu, X, CheckCircle2, Star 
 } from "lucide-react";
+// استيراد الـ store لجلب البيانات الحية
+import { useStore } from "../lib/store";
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // بيانات البرامج التعليمية في المعهد
-  const programs = [
-    { title: "حفظ وتجويد القرآن الكريم", desc: "حلقات مخصصة لجميع الأعمار تهدف إلى الحفظ المتقن بأحكام التجويد.", icon: BookOpen },
-    { title: "علوم القرآن والحديث", desc: "دراسة مبسطة لعمق الآيات الكريمة والأحاديث النبوية الشريفة.", icon: Compass },
-    { title: "برنامج التميز الأسبوعي", desc: "تحفيز مستمر للطلاب الملتزمين وتتويج نجم الأسبوع بجوائز تقديرية.", icon: Award },
+  // جلب البرامج والمدرسين المخزنين في الـ Database
+  const { programs: dbPrograms, teachers: dbTeachers } = useStore();
+
+  // برامج افتراضية تظهر كاحتياط في حال كانت الـ Database فارغة
+  const defaultPrograms = [
+    { id: "p1", title: "حفظ وتجويد القرآن الكريم", description: "حلقات مخصصة لجميع الأعمار تهدف إلى الحفظ المتقن بأحكام التجويد." },
+    { id: "p2", title: "علوم القرآن والحديث", description: "دراسة مبسطة لعمق الآيات الكريمة والأحاديث النبوية الشريفة." },
+    { id: "p3", title: "برنامج التميز الأسبوعي", description: "تحفيز مستمر للطلاب الملتزمين وتتويج نجم الأسبوع بجوائز تقديرية." },
   ];
 
-  // بيانات المدرسين الأفاضل
-  const teachers = [
-    { name: "الشيخ أحمد المحمد", role: "مشرف مسار الحفظ والإتقان", image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=300&q=80" },
-    { name: "الأستاذة فاطمة عمر", role: "مشرفة حلقة الإناث والتجويد", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" },
-    { name: "الشيخ محمود العلي", role: "مدرس علوم القرآن والتفسير", image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" },
-  ];
+  // دمج أو اختيار البيانات المعروضة
+  const programsToDisplay = dbPrograms && dbPrograms.length > 0 ? dbPrograms : defaultPrograms;
+  const teachersToDisplay = dbTeachers || [];
 
-  // معرض صور الأنشطة
+  // معرض صور الأنشطة للمعهد
   const activities = [
     { title: "تكريم حفظة سورة الملك", img: "/all.jpg" },
     { title: "رحلة ترفيهية لطلاب الحلقات", img: "/all1.jpg" },
@@ -35,7 +37,7 @@ export default function LandingPage() {
       
       {/* الهيدر / شريط التنقل */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0f211a]/80 backdrop-blur-md border-b border-emerald-100 dark:border-white/5 transition-colors">
-        <div className="max-w-7xl margin-auto mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-bright to-emerald-rich flex items-center justify-center text-white font-bold shadow-md">
@@ -95,7 +97,7 @@ export default function LandingPage() {
           </p>
           <div className="flex justify-center gap-4 pt-4">
             <a href="#about" className="bg-gold text-emerald-deep font-extrabold px-8 py-3.5 rounded-xl shadow-lg hover:bg-yellow-500 transition-colors">اكتشف المعهد</a>
-            <a href="https://wa.me/96100000000" target="_blank" rel="noreferrer" className="bg-white/10 border border-white/20 font-bold px-6 py-3.5 rounded-xl inline-flex items-center gap-2 hover:bg-white/20 transition-all">
+            <a href="https://wa.me/00963995482768" target="_blank" rel="noreferrer" className="bg-white/10 border border-white/20 font-bold px-6 py-3.5 rounded-xl inline-flex items-center gap-2 hover:bg-white/20 transition-all">
               <MessageCircle className="w-5 h-5 text-green-400 fill-green-400" /> استفسار سريع عبر واتساب
             </a>
           </div>
@@ -147,18 +149,28 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* قسم البرامج والمسارات */}
+      {/* قسم البرامج والمسارات - مربوط بالـ Store */}
       <section id="programs" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 mb-12">
           <h2 className="text-3xl font-black text-emerald-deep dark:text-white">برامجنا التعليمية المتميزة</h2>
           <p className="text-gray-500 max-w-xl mx-auto text-sm">مسارات تعليمية واضحة ومدروسة بعناية لتناسب قدرات ومستويات كل طالب وطالبة</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {programs.map((p, i) => (
-            <div key={i} className="bg-white dark:bg-[#0f211a] p-6 rounded-2xl border border-slate-200/60 dark:border-white/5 shadow-sm space-y-4 hover:border-emerald-bright dark:hover:border-emerald-bright transition-all">
-              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-white/5 flex items-center justify-center text-emerald-rich"><p.icon className="w-5 h-5" /></div>
+          {programsToDisplay.map((p, i) => (
+            <div key={p.id || i} className="bg-white dark:bg-[#0f211a] p-6 rounded-2xl border border-slate-200/60 dark:border-white/5 shadow-sm space-y-4 hover:border-emerald-bright dark:hover:border-emerald-bright transition-all">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-white/5 flex items-center justify-center text-emerald-rich">
+                <BookOpen className="w-5 h-5" />
+              </div>
               <h3 className="text-lg font-bold text-emerald-deep dark:text-white">{p.title}</h3>
-              <p className="text-gray-600 dark:text-emerald-100/60 text-xs leading-relaxed">{p.desc}</p>
+              <p className="text-gray-600 dark:text-emerald-100/60 text-xs leading-relaxed">{p.description}</p>
+              
+              {/* عرض المدة والمستوى في حال تواجدهما في بيانات الـ store */}
+              {('duration' in p || 'level' in p) && (
+                <div className="flex items-center gap-2 mt-2 text-[10px] flex-wrap">
+                  {p.duration && <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-white/5 text-emerald-rich font-semibold">{p.duration}</span>}
+                  {p.level && <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-white/5 text-amber-600 font-semibold">{p.level}</span>}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -184,22 +196,39 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* قسم المدرسين الأفاضل */}
+      {/* قسم المدرسين الأفاضل - مربوط بالـ Store بالكامل */}
       <section id="teachers" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center space-y-3 mb-12">
           <h2 className="text-3xl font-black text-emerald-deep dark:text-white">طاقمنا التعليمي المتميز</h2>
           <p className="text-gray-500 max-w-xl mx-auto text-sm">كفاءات قرآنية متخصصة تجمع بين الخبرة الطويلة والأسلوب التربوي الحكيم</p>
         </div>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {teachers.map((t, i) => (
-            <div key={i} className="bg-white dark:bg-[#0f211a] p-5 rounded-2xl text-center border border-slate-200/60 dark:border-white/5 shadow-sm space-y-3">
-              <img src={t.image} alt={t.name} className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-emerald-50 dark:border-white/10" />
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 justify-center">
+          {teachersToDisplay.map((t, i) => (
+            <motion.div 
+              key={t.id || i} 
+              initial={{ opacity: 0, scale: 0.9 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              transition={{ delay: i * 0.05 }}
+              className="bg-white dark:bg-[#0f211a] p-5 rounded-2xl text-center border border-slate-200/60 dark:border-white/5 shadow-sm space-y-3"
+            >
+              {t.photo ? (
+                <img src={t.photo} alt={t.name} className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-emerald-50 dark:border-white/10 shadow-sm" />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-bright to-emerald-deep mx-auto flex items-center justify-center text-white shadow-md">
+                  <Users className="w-9 h-9" />
+                </div>
+              )}
               <div>
-                <h3 className="font-bold text-emerald-deep dark:text-white text-base">{t.name}</h3>
-                <p className="text-xs text-gold font-semibold mt-1">{t.role}</p>
+                <h3 className="font-bold text-emerald-deep dark:text-white text-sm line-clamp-1">{t.name}</h3>
+                <p className="text-xs text-gold font-semibold mt-1 line-clamp-1">{t.subject || "مدرس القرآن الكريم"}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
+          
+          {teachersToDisplay.length === 0 && (
+            <p className="col-span-full text-center text-gray-400 py-8 text-sm">لا يوجد معلمون مسجلون حالياً في هيئة التدريس.</p>
+          )}
         </div>
       </section>
 
@@ -228,7 +257,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span>الموقع: سوريا / حمص /ريف القصير قرية سقرجة الطريق العام</span>
+                <span>الموقع: سوريا / حمص / ريف القصير - قرية سقرجة - الطريق العام</span>
               </div>
             </div>
           </div>
@@ -239,7 +268,7 @@ export default function LandingPage() {
             <div className="rounded-xl overflow-hidden border-2 border-emerald-800 h-40 bg-emerald-900/40">
               <iframe 
                 title="موقع معهد المصطفى"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3312.2852264870025!2d35.5011!3d33.8938!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzPCsDUzJzM3LjciTiAzNcKwMzAnMDQuMCJF!5e0!3m2!1sar!2slb!4v1620000000000!5m2!1sar!2slb" 
+                src="https://maps.google.com/?q=34.520954,36.505640&entry=gps&g_st=ac" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
