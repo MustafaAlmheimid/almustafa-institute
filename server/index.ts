@@ -27,13 +27,146 @@ const seedUsers = [
   { username: "student", password: "student123", role: "student", name: "أحمد المصطفى", studentId: "seed-s1" },
 ];
 
-async function seed() {
-  const count = await prisma.student.count();
-  if (count > 0) return; // already seeded
+// async function seed() {
+//   const count = await prisma.student.count();
+//   if (count > 0) return; // already seeded
 
-  // Seed users
+//   // Seed users
+//   for (const u of seedUsers) {
+//     await prisma.user.upsert({ where: { username: u.username }, update: {}, create: u });
+//   }
+
+//   // Seed teachers
+//   const teachers = [
+//     { name: "الشيخ عبد الرحمن", subject: "حفظ القرآن والتجويد", photo: "" },
+//     { name: "الأستاذة مريم", subject: "التلاوة والعلوم الدينية", photo: "" },
+//     { name: "الأستاذ خالد", subject: "المواد المدرسية", photo: "" },
+//     { name: "الأستاذة نور", subject: "اللغة العربية", photo: "" },
+//     { name: "الشيخ يوسف", subject: "الفقه والعقيدة", photo: "" },
+//   ];
+//   for (const t of teachers) await prisma.teacher.create({ data: t });
+
+//   // Seed programs
+//   const programs = [
+//     { title: "حفظ القرآن الكريم", description: "برنامج متكامل لحفظ القرآن الكريم بالتجويد على يد نخبة من المعلمين المتخصصين.", icon: "book", duration: "مستمر", level: "جميع المستويات" },
+//     { title: "التلاوة والتجويد", description: "تعلم أحكام التجويد وإتقان تلاوة القرآن الكريم بالأحكام الصحيحة.", icon: "mic", duration: "6 أشهر", level: "مبتدئ - متقدم" },
+//     { title: "العلوم الدينية", description: "دراسة الفقه والعقيدة والسيرة النبوية والأخلاق الإسلامية.", icon: "scroll", duration: "سنة دراسية", level: "جميع المراحل" },
+//     { title: "المواد المدرسية", description: "دعم تعليمي لجميع المواد المدرسية ولجميع الصفوف الدراسية.", icon: "graduation", duration: "سنة دراسية", level: "جميع الصفوف" },
+//     { title: "إعداد الصف التاسع", description: "برنامج مكثف لإعداد طلاب الصف التاسع للامتحانات الانتقالية.", icon: "target", duration: "سنة دراسية", level: "الصف التاسع" },
+//     { title: "إعداد الشهادة الرسمية", description: "تحضير شامل للامتحانات الوطنية والشهادات الرسمية.", icon: "award", duration: "سنة دراسية", level: "الشهادات الرسمية" },
+//   ];
+//   for (const p of programs) await prisma.program.create({ data: p });
+
+//   // Seed announcements
+//   const announcements = [
+//     { title: "بدء التسجيل للفصل الدراسي الجديد", body: "يسر معهد المصطفى الإعلان عن فتح باب التسجيل للفصل الدراسي الجديد لجميع المراحل. سارعوا بالتسجيل قبل امتلاء المقاعد.", date: new Date().toISOString().slice(0, 10), important: true },
+//     { title: "مسابقة حفظ القرآن الكريم السنوية", body: "تنطلق مسابقة المعهد السنوية لحفظ القرآن الكريم الشهر القادم. الجوائز قيمة لأوائل الحافظين. للتسجيل يرجى مراجعة الإدارة.", date: new Date(Date.now() - 86400000 * 3).toISOString().slice(0, 10), important: false },
+//     { title: "اجتماع أولياء الأمور", body: "ندعو جميع أولياء الأمور لحضور الاجتماع الدوري لمناقشة مستوى أبنائهم يوم السبت القادم الساعة العاشرة صباحاً.", date: new Date(Date.now() - 86400000 * 7).toISOString().slice(0, 10), important: false },
+//   ];
+//   for (const a of announcements) await prisma.announcement.create({ data: a });
+
+//   // Seed students
+//   const studentData = [
+//     {
+//       id: "seed-s1",
+//       fullName: "أحمد محمد المصطفى",
+//       photo: "/students/student1.png",
+//       birthDate: "2012-04-15",
+//       grade: "الصف السابع",
+//       enrollmentDate: "2021-09-01",
+//       parentName: "محمد المصطفى",
+//       parentPhone: "0501234567",
+//       address: "حي النور، الرياض",
+//       notes: "طالب مجتهد ومنتظم في الحضور",
+//       subjects: ["حفظ القرآن", "التجويد", "الفقه", "الرياضيات", "اللغة العربية"],
+//       performance: "ممتاز",
+//       teacher: "الشيخ عبد الرحمن",
+//       teacherNotes: "حفظ متقن وأداء ممتاز في التجويد. ينصح بالمراجعة المستمرة.",
+//       lastUpdate: new Date().toISOString().slice(0, 10),
+//       memorized: [
+//         { surah: 1, date: "2023-01-15" },
+//         { surah: 114, date: "2023-02-01" },
+//         { surah: 113, date: "2023-02-15" },
+//         { surah: 112, date: "2023-03-01" },
+//         { surah: 111, date: "2023-03-20" },
+//         { surah: 110, date: "2023-04-05" },
+//         { surah: 109, date: "2023-04-20" },
+//         { surah: 108, date: "2023-05-01" },
+//         { surah: 107, date: "2023-05-15" },
+//         { surah: 106, date: "2023-06-01" },
+//         { surah: 105, date: "2023-06-15" },
+//         { surah: 104, date: "2023-07-01" },
+//         { surah: 103, date: "2023-07-15" },
+//         { surah: 102, date: "2023-08-01" },
+//         { surah: 101, date: "2023-08-15" },
+//         { surah: 100, date: "2023-09-01" },
+//         { surah: 99, date: "2023-09-15" },
+//         { surah: 98, date: "2023-10-01" },
+//       ],
+//       attendance: generateSeedAttendance(),
+//     },
+//     {
+//       fullName: "فاطمة علي الزهراء",
+//       photo: "/students/student2.png",
+//       birthDate: "2013-08-22",
+//       grade: "الصف السادس",
+//       enrollmentDate: "2022-09-01",
+//       parentName: "علي الزهراء",
+//       parentPhone: "0509876543",
+//       address: "حي الياسمين، الرياض",
+//       notes: "طالبة متميزة في التلاوة",
+//       subjects: ["حفظ القرآن", "التجويد", "العلوم الدينية", "العلوم"],
+//       performance: "ممتاز",
+//       teacher: "الأستاذة مريم",
+//       teacherNotes: "صوت جميل وتلاوة متقنة. متفوقة في الحفظ.",
+//       lastUpdate: new Date().toISOString().slice(0, 10),
+//       memorized: [
+//         { surah: 1, date: "2023-02-01" },
+//         { surah: 114, date: "2023-02-20" },
+//         { surah: 113, date: "2023-03-10" },
+//         { surah: 112, date: "2023-04-01" },
+//         { surah: 111, date: "2023-04-20" },
+//         { surah: 110, date: "2023-05-10" },
+//         { surah: 109, date: "2023-06-01" },
+//         { surah: 108, date: "2023-06-20" },
+//         { surah: 107, date: "2023-07-10" },
+//         { surah: 106, date: "2023-08-01" },
+//         { surah: 105, date: "2023-08-20" },
+//         { surah: 104, date: "2023-09-10" },
+//       ],
+//       attendance: generateSeedAttendance(),
+//     },
+//   ];
+
+//   for (const s of studentData) {
+//     const { memorized, attendance, ...studentFields } = s as any;
+//     await prisma.student.create({
+//       data: {
+//         ...studentFields,
+//         memorized: { create: memorized },
+//         attendance: { create: attendance },
+//       },
+//     });
+//   }
+
+//   console.log("✅ Database seeded successfully");
+// }
+async function seed() {
+  // 1. تحقق من الحسابات وأنشئها دائماً بشكل منفصل لضمان القدرة على تسجيل الدخول
   for (const u of seedUsers) {
-    await prisma.user.upsert({ where: { username: u.username }, update: {}, create: u });
+    await prisma.user.upsert({ 
+      where: { username: u.username }, 
+      update: {}, 
+      create: u 
+    });
+  }
+  console.log("🔹 Core users checked/seeded");
+
+  // 2. الآن تحقق من وجود الطلاب؛ إذا كان هناك طلاب، توقف هنا ولا تكرر البيانات التجريبية
+  const studentCount = await prisma.student.count();
+  if (studentCount > 0) {
+    console.log("✅ Database already has student data. Skipping mock data seeding.");
+    return; 
   }
 
   // Seed teachers
