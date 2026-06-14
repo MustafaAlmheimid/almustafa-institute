@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: al-mustafa-institute
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run render:build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: al-mustafa-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://al-mustafa-institute.onrender.com
+
+databases:
+  - name: al-mustafa-db
+    plan: free
+    databaseName: almustafa
+    user: almustafa

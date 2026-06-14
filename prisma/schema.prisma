@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+  role     String
+  name     String
+  studentId String?
+}
+
+model Student {
+  id              String   @id @default(cuid())
+  fullName        String
+  photo           String
+  birthDate       String
+  grade           String
+  enrollmentDate  String
+  parentName      String
+  parentPhone     String
+  address         String
+  notes           String
+  subjects        String[]
+  performance     String
+  teacher         String
+  teacherNotes    String
+  lastUpdate      String
+  memorized       MemorizationProgress[]
+  attendance      Attendance[]
+}
+
+model MemorizationProgress {
+  id        String   @id @default(cuid())
+  surah     Int
+  date      String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  date      String
+  status    String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  date      String
+  important Boolean  @default(false)
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String
+  duration    String
+  level       String
+}
+
+model Teacher {
+  id      String @id @default(cuid())
+  name    String
+  subject String
+  photo   String
+}

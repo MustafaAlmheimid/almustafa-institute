@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-emerald-deep: #064e3b;
+  --color-emerald-rich: #047857;
+  --color-emerald-bright: #10b981;
+  --color-gold: #c9a227;
+  --color-gold-soft: #e3c766;
+  --color-cream: #faf8f2;
+
+  --font-display: "Amiri", "Scheherazade New", serif;
+  --font-body: "Cairo", "Tajawal", sans-serif;
+}
+
+@font-face {
+  font-family: "Cairo";
+  src: local("Cairo");
+}
+
+:root {
+  font-family: "Cairo", "Tajawal", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-cream);
+}
+
+.font-arabic {
+  font-family: "Amiri", "Scheherazade New", "Cairo", serif;
+}
+
+/* Islamic geometric background pattern */
+.pattern-islamic {
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2310b981' stroke-opacity='0.06' stroke-width='1'%3E%3Cpath d='M30 0l15 15-15 15-15-15z'/%3E%3Cpath d='M30 30l15 15-15 15-15-15z'/%3E%3Cpath d='M0 30l15-15 15 15-15 15z'/%3E%3Cpath d='M30 30l15-15 15 15-15 15z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.pattern-gold {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9a227' fill-opacity='0.08'%3E%3Cpath d='M20 0l5 15h15l-12 9 5 16-13-10-13 10 5-16-12-9h15z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop-in { animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-40px); opacity: 0; }
+}
+.animate-float-up { animation: float-up 1.2s ease-out forwards; }
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  10% { transform: scale(1.03); }
+  20% { transform: scale(1); }
+}
+.animate-heartbeat { animation: heartbeat 2.4s ease-in-out infinite; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #10b98155; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #10b981aa; }
+
+.dark body { background: #0a1410; }
+
+@media print {
+  .no-print { display: none !important; }
+  .print-page { box-shadow: none !important; margin: 0 !important; }
+  body { background: white !important; }
+}
