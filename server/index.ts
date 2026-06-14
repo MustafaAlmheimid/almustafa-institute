@@ -350,8 +350,8 @@ app.get("/api/health", (_req, res) => res.json({ ok: true }));
 const distPath = path.join(__dirname, "..", "dist");
 app.use(express.static(distPath));
 
-// التوجيه الصحيح والشامل (Catch-all) لإعادة توجيه أي مسار متصفح لملف الواجهة الرئيسي
-app.get("*", (req, res, next) => {
+// دالة توجيه شاملة آمنة لا تعتمد على النجمة أو التعبيرات المنتظمة الحساسة في Express
+app.use((req, res, next) => {
   if (req.path.startsWith("/api")) {
     return next();
   }
