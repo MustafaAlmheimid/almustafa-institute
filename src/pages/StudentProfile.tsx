@@ -19,9 +19,10 @@ export default function StudentProfile() {
   const [tab, setTab] = useState<"all" | "memorized" | "remaining">("all");
   const [q, setQ] = useState("");
   const [certOpen, setCertOpen] = useState(false);
-  const [certType, setCertType] = useState<"surah" | "juz">("surah");
+  const [certType, setCertType] = useState<"surah" | "juz" | "star">("surah");
   const [certSurah, setCertSurah] = useState(1);
   const [certJuz, setCertJuz] = useState(1);
+  const [starReason, setStarReason] = useState("");
 
   const isAdmin = user?.role === "admin";
 
@@ -316,19 +317,19 @@ export default function StudentProfile() {
             >
               <div className="bg-emerald-deep text-white px-6 py-4 flex items-center justify-between rounded-t-2xl">
                 <h3 className="font-bold text-lg flex items-center gap-2">
-                  <Award className="w-5 h-5" /> طباعة شهادة إتمام
+                  <Award className="w-5 h-5" /> طباعة شهادة تقديرية
                 </h3>
                 <button onClick={() => setCertOpen(false)}><X className="w-6 h-6" /></button>
               </div>
               <div className="p-6 space-y-5">
                 <div>
                   <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">نوع الشهادة</label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="grid grid-cols-3 gap-2 mt-2">
                     <button
                       onClick={() => setCertType("surah")}
-                      className={`py-3 rounded-xl border text-sm font-bold transition-all ${
+                      className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${
                         certType === "surah"
-                          ? "border-emerald-bright bg-emerald-50 dark:bg-white/10 text-emerald-rich"
+                          ? "border-emerald-bright bg-emerald-50 dark:bg-white/10 text-emerald-rich shadow-sm"
                           : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-300"
                       }`}
                     >
@@ -336,24 +337,34 @@ export default function StudentProfile() {
                     </button>
                     <button
                       onClick={() => setCertType("juz")}
-                      className={`py-3 rounded-xl border text-sm font-bold transition-all ${
+                      className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${
                         certType === "juz"
-                          ? "border-emerald-bright bg-emerald-50 dark:bg-white/10 text-emerald-rich"
+                          ? "border-emerald-bright bg-emerald-50 dark:bg-white/10 text-emerald-rich shadow-sm"
                           : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-300"
                       }`}
                     >
                       إتمام جزء
                     </button>
+                    <button
+                      onClick={() => setCertType("star")}
+                      className={`py-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        certType === "star"
+                          ? "border-amber-500 bg-amber-50 dark:bg-amber-500/10 text-amber-600 shadow-sm"
+                          : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-gray-300"
+                      }`}
+                    >
+                      🌟 نجم الأسبوع
+                    </button>
                   </div>
                 </div>
 
-                {certType === "surah" ? (
-                  <div>
+                {certType === "surah" && (
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
                     <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">اختر السورة</label>
                     <select
                       value={certSurah}
                       onChange={(e) => setCertSurah(Number(e.target.value))}
-                      className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
+                      className="w-full mt-1.5 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
                     >
                       {SURAHS.map((s) => (
                         <option key={s.number} value={s.number}>
@@ -361,20 +372,35 @@ export default function StudentProfile() {
                         </option>
                       ))}
                     </select>
-                  </div>
-                ) : (
-                  <div>
+                  </motion.div>
+                )}
+
+                {certType === "juz" && (
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
                     <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">اختر الجزء</label>
                     <select
                       value={certJuz}
                       onChange={(e) => setCertJuz(Number(e.target.value))}
-                      className="w-full mt-1 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
+                      className="w-full mt-1.5 px-4 py-2.5 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white outline-none focus:ring-2 focus:ring-emerald-bright"
                     >
                       {Array.from({ length: 30 }, (_, i) => i + 1).map((j) => (
                         <option key={j} value={j}>الجزء {j}</option>
                       ))}
                     </select>
-                  </div>
+                  </motion.div>
+                )}
+
+                {certType === "star" && (
+                  <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="space-y-1.5">
+                    <label className="text-sm font-semibold text-emerald-deep dark:text-emerald-100">سبب منح الشهادة للتميز</label>
+                    <textarea
+                      value={starReason}
+                      onChange={(e) => setStarReason(e.target.value)}
+                      placeholder="أدخل سبب التميز هنا (مثال: لتميزه الاستثنائي في حفظ سورة الملك بالتجويد، أو لانضباطه العالي هذا الأسبوع...)"
+                      rows={3}
+                      className="w-full rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-bright dark:border-white/10 dark:bg-[#0a1410] dark:text-white placeholder:text-gray-400"
+                    />
+                  </motion.div>
                 )}
 
                 <button
@@ -383,13 +409,18 @@ export default function StudentProfile() {
                       type: certType,
                       surah: certType === "surah" ? certSurah : undefined,
                       juz: certType === "juz" ? certJuz : undefined,
+                      reason: certType === "star" ? starReason : undefined,
                     });
                     setCertOpen(false);
                   }}
-                  className="w-full py-3 rounded-xl bg-gradient-to-l from-emerald-bright to-emerald-rich text-white font-bold shadow-lg hover:scale-[1.02] transition-transform"
+                  className={`w-full py-3 rounded-xl font-bold text-white shadow-lg hover:scale-[1.02] transition-transform ${
+                    certType === "star" 
+                      ? "bg-gradient-to-l from-amber-500 to-yellow-600" 
+                      : "bg-gradient-to-l from-emerald-bright to-emerald-rich"
+                  }`}
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <Printer className="w-5 h-5" /> طباعة الشهادة
+                    <Printer className="w-5 h-5" /> طباعة وعرض الشهادة
                   </span>
                 </button>
               </div>
