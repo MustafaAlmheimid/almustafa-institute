@@ -23,6 +23,10 @@ export default function StudentProfile() {
   const [certSurah, setCertSurah] = useState(1);
   const [certJuz, setCertJuz] = useState(1);
   const [starReason, setStarReason] = useState("");
+  
+  // حقول الحالات (States) الجديدة لإدخال أسماء المشرفين بشكل يدوي
+  const [supervisorName, setSupervisorName] = useState("");
+  const [generalSupervisorName, setGeneralSupervisorName] = useState("مصطفى المحيميد");
 
   const isAdmin = user?.role === "admin";
 
@@ -245,7 +249,6 @@ export default function StudentProfile() {
       <div>
         <SectionTitle sub={isAdmin ? "اضغط على أي يوم لتغيير حالته: حاضر ← متأخر ← غائب ← حذف" : "سجل الحضور والإنجازات"}>الحضور والإنجازات</SectionTitle>
         <Card className="p-5">
-          {/* Summary + formula */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <div className="flex items-center gap-2 bg-emerald-50 dark:bg-white/5 rounded-xl px-4 py-2">
               <span className="text-sm text-gray-500 dark:text-emerald-100/60">نسبة الحضور</span>
@@ -403,6 +406,31 @@ export default function StudentProfile() {
                   </motion.div>
                 )}
 
+                {/* ─── الحقول النصية المضافة حديثاً لتعديل أسماء المشرفين ─── */}
+                <div className="border-t border-dashed border-emerald-100 dark:border-white/10 pt-4 space-y-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 dark:text-emerald-100/70">اسم المشرف (توقيع فرعي)</label>
+                    <input
+                      type="text"
+                      value={supervisorName}
+                      onChange={(e) => setSupervisorName(e.target.value)}
+                      placeholder="اتركه فارغاً للاعتماد على (الشيخ المسؤول)"
+                      className="w-full mt-1 px-4 py-2 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-bright"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 dark:text-emerald-100/70">اسم المشرف العام</label>
+                    <input
+                      type="text"
+                      value={generalSupervisorName}
+                      onChange={(e) => setGeneralSupervisorName(e.target.value)}
+                      placeholder="مثال: مصطفى المحيميد"
+                      className="w-full mt-1 px-4 py-2 rounded-xl border border-emerald-200 dark:border-white/10 bg-white dark:bg-[#0a1410] dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-bright"
+                    />
+                  </div>
+                </div>
+                {/* ─────────────────────────────────────────────────── */}
+
                 <button
                   onClick={() => {
                     generateCertificate(student, {
@@ -410,6 +438,9 @@ export default function StudentProfile() {
                       surah: certType === "surah" ? certSurah : undefined,
                       juz: certType === "juz" ? certJuz : undefined,
                       reason: certType === "star" ? starReason : undefined,
+                      // تمرير القيم اليدوية هنا إلى الدالة المحدثة
+                      supervisorName: supervisorName || undefined,
+                      generalSupervisorName: generalSupervisorName || undefined,
                     });
                     setCertOpen(false);
                   }}

@@ -23,7 +23,7 @@ export function generateCertificate(student: Student, opts: CertOptions) {
   let isStar = opts.type === "star";
 
   // تحديد الأسماء ديناميكياً أو اعتماد قيم افتراضية
-  const supervisor = opts.supervisorName?.trim() || "الشيخ المسؤول";
+  const supervisor = opts.supervisorName?.trim() || "حنان الشهاب";
   const generalSupervisor = opts.generalSupervisorName?.trim() || "مصطفى المحيميد";
 
   if (opts.type === "surah" && opts.surah) {
