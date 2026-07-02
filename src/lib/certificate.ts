@@ -320,7 +320,7 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           </div>
           <div class="sign">
             <div class="line"></div>
-            <div class="role">المشرف</div>
+            <div class="role"> المشرف المباشر</div>
             <div class="name">${supervisor}</div>
           </div>
           <div class="sign">
