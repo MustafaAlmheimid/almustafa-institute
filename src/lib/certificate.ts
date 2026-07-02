@@ -1,14 +1,15 @@
 import type { Student } from "./store";
 import { getSurah } from "./surahs";
 
-// إضافة النوع الجديد "star" للشهادات
 export type CertType = "surah" | "juz" | "star";
 
 export interface CertOptions {
   type: CertType;
-  surah?: number; // لشهادة السورة
-  juz?: number;   // لشهادة الجزء
-  reason?: string; // لشهادة نجم الأسبوع
+  surah?: number;
+  juz?: number;
+  reason?: string;
+  supervisorName?: string;     // اسم المشرف (متغير يدوي)
+  generalSupervisorName?: string; // اسم المشرف العام (متغير يدوي)
 }
 
 export function generateCertificate(student: Student, opts: CertOptions) {
@@ -20,6 +21,10 @@ export function generateCertificate(student: Student, opts: CertOptions) {
   let body = "";
   let detail = "";
   let isStar = opts.type === "star";
+
+  // تحديد الأسماء ديناميكياً أو اعتماد قيم افتراضية
+  const supervisor = opts.supervisorName?.trim() || "الشيخ المسؤول";
+  const generalSupervisor = opts.generalSupervisorName?.trim() || "مصطفى المحيميد";
 
   if (opts.type === "surah" && opts.surah) {
     const s = getSurah(opts.surah)!;
@@ -72,7 +77,6 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           print-color-adjust: exact;
         }
 
-        /* ضبط أبعاد الشهادة لتصبح بالعرض (Landscape A4) بدقة */
         .cert-container {
           width: 297mm;
           height: 210mm;
@@ -90,7 +94,6 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
 
-        /* الإطار الداخلي الناعم */
         .cert-container::before {
           content: "";
           position: absolute;
@@ -126,7 +129,7 @@ export function generateCertificate(student: Student, opts: CertOptions) {
         }
 
         .cert-title h2 {
-          font-size: 16px;
+          size: 16px;
           color: ${isStar ? '#d97706' : '#d4af37'};
           font-weight: 800;
           letter-spacing: 0.5px;
@@ -139,7 +142,6 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           margin: 3mm auto 0 auto;
         }
 
-        /* المحتوى الأساسي والترتيب الأفقي البديع */
         .main-content {
           width: 100%;
           display: flex;
@@ -186,7 +188,6 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           width: 100%;
         }
 
-        /* الصورة الشخصية الجانبية بحجم متناسق جداً للعرض */
         .photo-side {
           width: 50mm;
           height: 50mm;
@@ -256,7 +257,6 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           margin-top: 1px;
         }
 
-        /* إعدادات الطباعة العريضة التلقائية */
         @media print {
           body { background: none; }
           .cert-container {
@@ -276,20 +276,17 @@ export function generateCertificate(student: Student, opts: CertOptions) {
     <body>
 
       <div class="cert-container">
-        <!-- الشعار بالجانبين -->
         <div class="header-logos">
           <div class="logo-box"><img src="${logoUrl}" alt="logo" onerror="this.style.display='none'" /></div>
           <div class="logo-box" style="transform: scaleX(-1);"><img src="${logoUrl}" alt="logo" onerror="this.style.display='none'" /></div>
         </div>
 
-        <!-- العناوين -->
         <div class="cert-title">
           <h1>${title}</h1>
           <h2>${subtitle}</h2>
           <div class="divider"></div>
         </div>
 
-        <!-- المحتوى الرئيسي المتوازن (النص يمين والصورة يسار) -->
         <div class="main-content">
           <div class="text-side">
             <div class="body-text">
@@ -306,17 +303,15 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           </div>
         </div>
 
-        <!-- الحديث الشريف -->
         <div class="verse">
           ﴿ خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ ﴾
         </div>
 
-        <!-- التاريخ -->
         <div class="date-box">
           حرر في: ${dateStr}
         </div>
 
-        <!-- التوقيعات الثلاثية -->
+        <!-- التوقيعات الثلاثية المحدثة بالأسماء المتغيرة -->
         <div class="signatures">
           <div class="sign">
             <div class="line"></div>
@@ -325,13 +320,13 @@ export function generateCertificate(student: Student, opts: CertOptions) {
           </div>
           <div class="sign">
             <div class="line"></div>
-            <div class="role">المدير التنفيذي</div>
-            <div class="name">إدارة المعهد</div>
+            <div class="role">المشرف</div>
+            <div class="name">${supervisor}</div>
           </div>
           <div class="sign">
             <div class="line"></div>
-            <div class="role">المدير العام</div>
-            <div class="name">معهد المصطفى</div>
+            <div class="role">المشرف العام</div>
+            <div class="name">${generalSupervisor}</div>
           </div>
         </div>
       </div>

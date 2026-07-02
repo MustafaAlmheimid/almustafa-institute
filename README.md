@@ -71,3 +71,7 @@ export default defineConfig([
   },
 ])
 ```
+
+
+## Gemini Chat for this app :
+https://gemini.google.com/app/0ea7a22aba4c2c9f
